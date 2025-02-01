@@ -1,14 +1,15 @@
 package com.pharma.pharmserv;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
-@Entity 
+@Entity
 public class User {
-  
+
   @Id
-  @GeneratedValue(strategy=GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.AUTO)
   private Integer id;
 
   private String userName;
@@ -16,6 +17,8 @@ public class User {
   private String userEmail;
 
   private String userId;
+
+  private String userPass;
 
   public Integer getId() {
     return id;
@@ -25,27 +28,35 @@ public class User {
     this.id = id;
   }
 
-  public String getName() {
+  public String getUserName() {
     return userName;
   }
 
-  public void setName(String name) {
-    this.userName = name;
+  public void setUserName(String userName) {
+    this.userName = userName;
   }
 
-  public String getEmail() {
+  public String getUserEmail() {
     return userEmail;
   }
 
-  public void setEmail(String email) {
-    this.userEmail = email;
+  public void setUserEmail(String userEmail) {
+    this.userEmail = userEmail;
   }
 
-  public String getUserId(){
+  public String getUserId() {
     return userId;
   }
 
-  public void setUserId(String id){
-   this.userId=id;
+  public void setUserId(String userId) {
+    this.userId = userId;
+  }
+
+  public String getUserPass() {
+    return userPass;
+  }
+
+  public void setUserPass(String userPass) {
+    this.userPass = userPass;
   }
 }
