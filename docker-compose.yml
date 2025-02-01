@@ -2,19 +2,19 @@ version: '3'
 
 services:
   
-  spring-server:
-    build:
-      context: . 
-      dockerfile: Dockerfile
-    container_name: pharmserv-spring-server  
-    ports:
-      - "8080:8080" 
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db-server:3306/pharmserv-db
-      SPRING_DATASOURCE_USERNAME: mysql
-      SPRING_DATASOURCE_PASSWORD: mysql
-    depends_on:
-      - db-server 
+  # spring-server:
+  #   build:
+  #     context: . 
+  #     dockerfile: Dockerfile
+  #   container_name: pharmserv-spring-server  
+  #   ports:
+  #     - "8080:8080" 
+  #   environment:
+  #     SPRING_DATASOURCE_URL: jdbc:mysql://db-server:3306/pharmserv-db
+  #     SPRING_DATASOURCE_USERNAME: mysql
+  #     SPRING_DATASOURCE_PASSWORD: mysql
+  #   depends_on:
+  #     - db-server 
 
   db-server:
     image: mysql:8.0.30
@@ -27,7 +27,7 @@ services:
       MYSQL_USER: mysql
       MYSQL_PASSWORD: mysql
     volumes:
-      - pharmserv-db-data:/var/lib/mysql 
+      - db-data:/var/lib/mysql 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin 
     container_name: pharmserv-db-gui
@@ -41,4 +41,4 @@ services:
       - db-server    
 
 volumes:
-  pharmserv-db-data:
+  db-data:
