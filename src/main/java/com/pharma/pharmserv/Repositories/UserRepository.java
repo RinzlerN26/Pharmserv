@@ -1,8 +1,8 @@
-package com.pharma.pharmserv;
+package com.pharma.pharmserv.Repositories;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.pharma.pharmserv.User;
+import com.pharma.pharmserv.Entities.User;
 
 @SuppressWarnings("unused")
 public interface UserRepository extends CrudRepository<User, Integer> {

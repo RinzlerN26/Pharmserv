@@ -1,4 +1,4 @@
-package com.pharma.pharmserv;
+package com.pharma.pharmserv.Entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

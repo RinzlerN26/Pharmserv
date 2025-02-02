@@ -1,4 +1,5 @@
-package com.pharma.pharmserv;
+package com.pharma.pharmserv.Controllers;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,4 +12,3 @@ public class WelcomeController {
 	}
 
 }
-
