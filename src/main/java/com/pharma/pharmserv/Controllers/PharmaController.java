@@ -1,6 +1,7 @@
 package com.pharma.pharmserv.Controllers;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,6 +57,25 @@ public class PharmaController {
                     .body("Error occurred while adding entry: " + e.getMessage());
         }
 
+    }
+
+    @GetMapping(path = "/get-pharma-entries")
+    public @ResponseBody Iterable<Pharma> getAllPharmaEntries() {
+        return pharmaRepository.findAll();
+    }
+
+    @GetMapping("/get-pharma-entries/{userId}")
+    public ResponseEntity<List<Pharma>> getPharmaEntriesByUser(@PathVariable Integer userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        User user = userOptional.get();
+        List<Pharma> medicines = pharmaRepository.findByUser(user);
+
+        return ResponseEntity.ok(medicines);
     }
 
 }
