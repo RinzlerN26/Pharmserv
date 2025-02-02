@@ -13,6 +13,8 @@ import jakarta.persistence.CascadeType;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Entity
 public class Pharma {
     @Id
@@ -23,12 +25,18 @@ public class Pharma {
     private String companyName;
     private Integer purchaseRate;
     private String dealerName;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate expiryDate;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public String getMedicineName() {
         return medicineName;
@@ -46,11 +54,11 @@ public class Pharma {
         this.companyName = companyName;
     }
 
-    public Integer getpurchaseRate() {
+    public Integer getPurchaseRate() {
         return purchaseRate;
     }
 
-    public void setpurchaseRate(Integer purchaseRate) {
+    public void setPurchaseRate(Integer purchaseRate) {
         this.purchaseRate = purchaseRate;
     }
 
