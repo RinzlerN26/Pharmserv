@@ -11,31 +11,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.pharma.pharmserv.Entities.User;
-import com.pharma.pharmserv.Repositories.UserRepository;
-
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import com.pharma.pharmserv.Services.UserService;
 
 @Controller
 @RequestMapping(path = "/user")
 public class UserController {
 
     @Autowired
-    private UserRepository userRepository;
-
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private UserService userService;
 
     @PostMapping(path = "/create-new-user")
     public ResponseEntity<String> createNewUser(@RequestBody User userDetails) {
         // userDetails gets converted to User object
         // Spring Boot binds JSON to the getter/setter names,
         try {
-            User n = new User();
-            n.setUserName(userDetails.getUserName());
-            n.setUserEmail(userDetails.getUserEmail());
-            n.setUserId(userDetails.getUserId());
-            n.setUserPass(passwordEncoder.encode(userDetails.getUserPass()));
-            userRepository.save(n);
+            userService.createNewUser(userDetails);
             return ResponseEntity.status(HttpStatus.CREATED).body("User Created Successfully");
 
         } catch (Exception e) {
@@ -46,6 +36,6 @@ public class UserController {
 
     @GetMapping(path = "/get-all-users")
     public @ResponseBody Iterable<User> getAllUsers() {
-        return userRepository.findAll();
+        return userService.getAllUsers();
     }
 }
