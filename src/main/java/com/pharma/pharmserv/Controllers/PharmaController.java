@@ -1,9 +1,7 @@
 package com.pharma.pharmserv.Controllers;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,39 +15,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.pharma.pharmserv.Entities.Pharma;
-import com.pharma.pharmserv.Entities.User;
-import com.pharma.pharmserv.Repositories.PharmaRepository;
-import com.pharma.pharmserv.Repositories.UserRepository;
+import com.pharma.pharmserv.Services.PharmaService;
 
 @Controller
 @RequestMapping(path = "/pharma")
 public class PharmaController {
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PharmaRepository pharmaRepository;
+    private PharmaService pharmaService;
 
     @PostMapping(path = "/add-pharma-entry")
     public ResponseEntity<String> addPharmaEntry(@RequestBody Map<String, Object> pharmaDetails) {
         try {
-            Optional<User> userObj = userRepository.findById((Integer) pharmaDetails.get("userId"));
+            String addEntryResult = pharmaService.addNewPharmaEntry(pharmaDetails);
 
-            if (userObj.isEmpty()) {
+            if (addEntryResult == "User Not Found.") {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found.");
             }
-
-            User user = userObj.get();
-            Pharma newPharmaEntry = new Pharma();
-            newPharmaEntry.setUser(user);
-            newPharmaEntry.setMedicineName((String) pharmaDetails.get("medicineName"));
-            newPharmaEntry.setCompanyName((String) pharmaDetails.get("companyName"));
-            newPharmaEntry.setDealerName((String) pharmaDetails.get("dealerName"));
-            newPharmaEntry.setPurchaseRate((Integer) pharmaDetails.get("purchaseRate"));
-            newPharmaEntry.setExpiryDate(LocalDate.parse((String) pharmaDetails.get("expiryDate")));
-            pharmaRepository.save(newPharmaEntry);
-
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body("Entry Added Successfully.");
         } catch (Exception e) {
@@ -61,21 +43,19 @@ public class PharmaController {
 
     @GetMapping(path = "/get-pharma-entries")
     public @ResponseBody Iterable<Pharma> getAllPharmaEntries() {
-        return pharmaRepository.findAll();
+        return pharmaService.getPharmaEntries();
     }
 
     @GetMapping("/get-pharma-entries/{userId}")
-    public ResponseEntity<List<Pharma>> getPharmaEntriesByUser(@PathVariable Integer userId) {
-        Optional<User> userOptional = userRepository.findById(userId);
+    public ResponseEntity<?> getPharmaEntriesByUser(@PathVariable Integer userId) {
+        try {
+            List<Pharma> pharmaEntries = pharmaService.getPharmaEntriesByUser(userId);
 
-        if (userOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.ok(pharmaEntries);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error occurred while adding entry: " + e.getMessage());
         }
-
-        User user = userOptional.get();
-        List<Pharma> medicines = pharmaRepository.findByUser(user);
-
-        return ResponseEntity.ok(medicines);
     }
 
 }
