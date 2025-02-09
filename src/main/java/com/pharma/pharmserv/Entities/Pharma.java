@@ -49,6 +49,10 @@ public class Pharma {
         return user.getId();
     }
 
+    public Integer getPharmaId() {
+        return id;
+    }
+
     public void setUser(User user) {
         this.user = user;
     }

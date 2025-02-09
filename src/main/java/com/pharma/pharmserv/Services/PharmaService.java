@@ -1,9 +1,11 @@
 package com.pharma.pharmserv.Services;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,12 +46,36 @@ public class PharmaService {
         return pharmaRepository.findAll();
     }
 
-    public List<Pharma> getPharmaEntriesByUser(Integer userId) {
+    public List<Map<String, Object>> getPharmaEntriesByUser(Integer userId) {
         Optional<User> userOptional = Optional
                 .ofNullable(userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User Not Found.")));
         User user = userOptional.get();
         List<Pharma> pharmaceuticals = pharmaRepository.findByUser(user);
-        return pharmaceuticals;
+        return pharmaceuticals.stream().map(pharma -> {
+            Map<String, Object> pharmaData = new HashMap<>();
+            pharmaData.put("pharmaId", pharma.getPharmaId());
+            pharmaData.put("medicineName", pharma.getMedicineName());
+            pharmaData.put("companyName", pharma.getCompanyName());
+            pharmaData.put("purchaseRate", pharma.getPurchaseRate());
+            pharmaData.put("dealerName", pharma.getDealerName());
+            pharmaData.put("expiryDate", pharma.getExpiryDate());
+            pharmaData.put("userId", pharma.getUserId());
+            return pharmaData;
+        }).collect(Collectors.toList());
+    }
+
+    public void deletePharmaEntry(Integer userId, Integer pharmaId) {
+        Optional<User> userOptional = Optional
+                .ofNullable(userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User Not Found.")));
+        if (userOptional.isPresent()) {
+            Optional<Pharma> pharmaOptional = Optional
+                    .ofNullable(pharmaRepository.findById(pharmaId)
+                            .orElseThrow(() -> new RuntimeException("Pharmaceutical Not Found.")));
+            if (pharmaOptional.isPresent()) {
+                pharmaRepository.deleteById(pharmaId);
+            }
+        }
+        return;
     }
 
 }
