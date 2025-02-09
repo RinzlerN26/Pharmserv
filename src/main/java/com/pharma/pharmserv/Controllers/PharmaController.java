@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -56,6 +57,18 @@ public class PharmaController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error occurred while adding entry: " + e.getMessage());
+        }
+    }
+
+    @PatchMapping(path = "/update-pharma-entry/{userId}/{pharmaId}")
+    public ResponseEntity<?> updateUser(@PathVariable Integer userId, @PathVariable Integer pharmaId,
+            @RequestBody Map<String, Object> pharmaDetails) {
+        try {
+            pharmaService.updatePharmaEntry(userId, pharmaId, pharmaDetails);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error occurred while updating user details: " + e.getMessage());
         }
     }
 

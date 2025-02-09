@@ -64,6 +64,40 @@ public class PharmaService {
         }).collect(Collectors.toList());
     }
 
+    public void updatePharmaEntry(Integer userId, Integer pharmaId, Map<String, Object> updatedPharmaDetails) {
+        Optional<User> userOptional = Optional
+                .ofNullable(userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User Not Found.")));
+        if (userOptional.isPresent()) {
+            Optional<Pharma> pharmaOptional = Optional
+                    .ofNullable(pharmaRepository.findById(pharmaId)
+                            .orElseThrow(() -> new RuntimeException("Pharmaceutical Not Found.")));
+            Pharma pharma = pharmaOptional.get();
+            updatedPharmaDetails.forEach((key, value) -> {
+                switch (key) {
+                    case "medicineName":
+                        pharma.setMedicineName((String) value);
+                        break;
+                    case "companyName":
+                        pharma.setCompanyName((String) value);
+                        break;
+                    case "purchaseRate":
+                        pharma.setPurchaseRate((Integer) value);
+                        break;
+                    case "dealerName":
+                        pharma.setDealerName((String) value);
+                        break;
+                    case "expiryDate":
+                        pharma.setExpiryDate(LocalDate.parse((String) value));
+                        break;
+                    default:
+                        break;
+                }
+            });
+            pharmaRepository.save(pharma);
+        }
+        return;
+    }
+
     public void deletePharmaEntry(Integer userId, Integer pharmaId) {
         Optional<User> userOptional = Optional
                 .ofNullable(userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User Not Found.")));
