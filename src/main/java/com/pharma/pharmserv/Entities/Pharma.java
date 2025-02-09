@@ -14,6 +14,18 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+//Migration Commands
+// SELECT TABLE_NAME, CONSTRAINT_NAME, DELETE_RULE
+// FROM information_schema.REFERENTIAL_CONSTRAINTS
+// WHERE TABLE_NAME = 'pharma';
+// ALTER TABLE pharma
+// DROP FOREIGN KEY FK7yttn8j8yp3ntvrhauu0ivxc5;
+
+// ALTER TABLE pharma
+// ADD CONSTRAINT FK7yttn8j8yp3ntvrhauu0ivxc5
+// FOREIGN KEY (user_id)
+// REFERENCES user(id) ON DELETE CASCADE;
+
 @Entity
 public class Pharma {
     @Id

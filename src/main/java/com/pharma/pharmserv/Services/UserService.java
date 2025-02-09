@@ -1,5 +1,8 @@
 package com.pharma.pharmserv.Services;
 
+import java.util.Map;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.pharma.pharmserv.Repositories.UserRepository;
@@ -26,6 +29,40 @@ public class UserService {
 
     public Iterable<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    public void updateUserById(Integer userId, Map<String, Object> updatedUserDetails) {
+        Optional<User> userOptional = Optional
+                .ofNullable(userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User Not Found.")));
+        User user = userOptional.get();
+        updatedUserDetails.forEach((key, value) -> {
+            switch (key) {
+                case "userName":
+                    user.setUserName((String) value);
+                    break;
+                case "userEmail":
+                    user.setUserEmail((String) value);
+                    break;
+                case "userPass":
+                    user.setUserPass(passwordEncoder.encode((String) value));
+                    break;
+                case "userId":
+                    user.setUserId((String) value);
+                    break;
+                default:
+                    break;
+            }
+        });
+        userRepository.save(user);
+    }
+
+    public void deleteUserById(Integer userId) {
+        Optional<User> userOptional = Optional
+                .ofNullable(userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User Not Found.")));
+        if (userOptional.isPresent()) {
+            userRepository.deleteById(userId);
+        }
+        return;
     }
 
 }
