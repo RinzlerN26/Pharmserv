@@ -19,10 +19,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 // FROM information_schema.REFERENTIAL_CONSTRAINTS
 // WHERE TABLE_NAME = 'pharma';
 // ALTER TABLE pharma
-// DROP FOREIGN KEY FK7yttn8j8yp3ntvrhauu0ivxc5;
+// DROP FOREIGN KEY 'ENTER CONSTRAINT_NAME HERE';
 
 // ALTER TABLE pharma
-// ADD CONSTRAINT FK7yttn8j8yp3ntvrhauu0ivxc5
+// ADD CONSTRAINT 'ENTER CONSTRAINT_NAME HERE'
 // FOREIGN KEY (user_id)
 // REFERENCES user(id) ON DELETE CASCADE;
 
