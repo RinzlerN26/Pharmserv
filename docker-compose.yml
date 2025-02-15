@@ -39,27 +39,29 @@ services:
       MYSQL_ROOT_PASSWORD: root
     depends_on:
       - db-server
-  ui:
-    build:
-      context: ../Pharmserv-UI
-      dockerfile: Dockerfile
-    container_name: pharmserv-ui
-    ports:
-      - "4200:4200"
-    volumes:
-      - ../Pharmserv-UI:/app  
-      - /app/node_modules   
-    depends_on:
-      - db-server
-  caddy:
-    image: caddy:alpine
-    container_name: pharmserv-caddy
-    ports:
-      - "80:80"  
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile    
-    depends_on:
-      - ui     
+
+  # ui:
+  #   build:
+  #     context: ../Pharmserv-UI
+  #     dockerfile: Dockerfile
+  #   container_name: pharmserv-ui
+  #   ports:
+  #     - "4200:4200"
+  #   volumes:
+  #     - ../Pharmserv-UI:/app  
+  #     - /app/node_modules   
+  #   depends_on:
+  #     - db-server
+  
+  # caddy:
+  #   image: caddy:alpine
+  #   container_name: pharmserv-caddy
+  #   ports:
+  #     - "80:80"  
+  #   volumes:
+  #     - ./Caddyfile:/etc/caddy/Caddyfile    
+  #   depends_on:
+  #     - ui     
 
 volumes:
   db-data:
