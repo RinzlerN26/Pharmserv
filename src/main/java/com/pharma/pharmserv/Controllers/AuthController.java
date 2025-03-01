@@ -24,7 +24,6 @@ public class AuthController {
         try {
             String userStringId = userCredentials.get("userStringId");
             String userPass = userCredentials.get("userPass");
-
             String userToken = authService.authenticate(userStringId, userPass);
 
             return ResponseEntity.ok(Map.of("token", userToken));
