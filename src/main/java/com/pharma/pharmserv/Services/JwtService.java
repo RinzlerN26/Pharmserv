@@ -9,7 +9,9 @@ import io.jsonwebtoken.security.Keys;
 import java.util.Date;
 import java.security.Key;
 import java.util.function.Function;
+import org.springframework.stereotype.Service;
 
+@Service
 public class JwtService {
     private final String SECRET_KEY = "ye8Fgw2HEY7USQalgnx3VOHld46BOxXCjGfe/pYPQFl71Z5qX+EAEH0CbXbkX66B";
 
