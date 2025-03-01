@@ -20,10 +20,10 @@ public class AuthService {
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public String authenticate(String userName, String userPass) {
+    public String authenticate(String userStringId, String userPass) {
 
         Optional<User> userOptional = Optional
-                .ofNullable(userRepository.findByUserName(userName)
+                .ofNullable(userRepository.findByUserId(userStringId)
                         .orElseThrow(() -> new RuntimeException("User Not Found.")));
 
         User user = userOptional.get();
@@ -32,6 +32,6 @@ public class AuthService {
             throw new RuntimeException("Invalid credentials.");
         }
 
-        return jwtService.generateToken(userName);
+        return jwtService.generateToken(userStringId);
     }
 }

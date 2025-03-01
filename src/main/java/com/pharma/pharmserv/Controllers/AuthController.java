@@ -22,10 +22,10 @@ public class AuthController {
     @PostMapping(path = "/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> userCredentials) {
         try {
-            String userName = userCredentials.get("userName");
+            String userStringId = userCredentials.get("userStringId");
             String userPass = userCredentials.get("userPass");
 
-            String userToken = authService.authenticate(userName, userPass);
+            String userToken = authService.authenticate(userStringId, userPass);
 
             return ResponseEntity.ok(Map.of("token", userToken));
         } catch (Exception e) {
