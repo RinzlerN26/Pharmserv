@@ -4,6 +4,8 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.pharma.pharmserv.Entities.User;
 
-public interface UserRepository extends CrudRepository<User, Integer> {
+import java.util.Optional;
 
+public interface UserRepository extends CrudRepository<User, Integer> {
+    Optional<User> findByUserName(String userName);
 }
