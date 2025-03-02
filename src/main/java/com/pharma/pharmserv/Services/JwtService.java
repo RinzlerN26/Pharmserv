@@ -29,7 +29,7 @@ public class JwtService {
                 .compact();
     }
 
-    public String extractUsername(String token) {
+    public String extractUserStringId(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -41,8 +41,8 @@ public class JwtService {
         return extractExpiration(token).before(new Date());
     }
 
-    public boolean validateToken(String token, String username) {
-        return (extractUsername(token).equals(username) && !isTokenExpired(token));
+    public boolean validateToken(String token, String userStringId) {
+        return (extractUserStringId(token).equals(userStringId) && !isTokenExpired(token));
     }
 
     private Claims extractAllClaims(String token) {
