@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.pharma.pharmserv.Entities.Pharma;
 import com.pharma.pharmserv.Services.PharmaService;
@@ -44,8 +43,14 @@ public class PharmaController {
     }
 
     @GetMapping(path = "/get-pharma-entries")
-    public @ResponseBody Iterable<Pharma> getAllPharmaEntries() {
-        return pharmaService.getPharmaEntries();
+    public ResponseEntity<?> getAllPharmaEntries() {
+        try {
+            Iterable<Pharma> pharmas = pharmaService.getPharmaEntries();
+            return ResponseEntity.ok(pharmas);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error occurred while fetching users: " + e.getMessage());
+        }
     }
 
     @GetMapping("/get-pharma-entries/{userId}")
