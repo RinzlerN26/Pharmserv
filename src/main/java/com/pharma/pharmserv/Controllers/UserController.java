@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.pharma.pharmserv.Entities.User;
 import com.pharma.pharmserv.Services.UserService;
@@ -40,8 +39,25 @@ public class UserController {
     }
 
     @GetMapping(path = "/get-all-users")
-    public @ResponseBody Iterable<User> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<?> getAllUsers() {
+        try {
+            Iterable<User> users = userService.getAllUsers();
+            return ResponseEntity.ok(users);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error occurred while fetching users: " + e.getMessage());
+        }
+    }
+
+    @GetMapping(path = "/get-user-details/{userStringId}")
+    public ResponseEntity<?> getUserDetails(@PathVariable String userStringId) {
+        try {
+            Map<String, String> userDetailsMap = userService.getUserDetails(userStringId);
+            return ResponseEntity.ok(userDetailsMap);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error occurred while fetching user details: " + e.getMessage());
+        }
     }
 
     @PatchMapping(path = "/update-user/{userId}")

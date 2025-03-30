@@ -1,5 +1,6 @@
 package com.pharma.pharmserv.Services;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -29,6 +30,19 @@ public class UserService {
 
     public Iterable<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    public Map<String, String> getUserDetails(String userStringId) {
+        Optional<User> userOptional = Optional
+                .ofNullable(userRepository.findByUserId(userStringId)
+                        .orElseThrow(() -> new RuntimeException("User Not Found.")));
+
+        User user = userOptional.get();
+        Map<String, String> userDetails = new HashMap<>();
+        userDetails.put("userName", user.getUserName());
+        userDetails.put("userEmail", user.getUserEmail());
+        userDetails.put("userIntId", user.getId().toString());
+        return userDetails;
     }
 
     public void updateUserById(Integer userId, Map<String, Object> updatedUserDetails) {
