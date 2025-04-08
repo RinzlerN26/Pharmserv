@@ -81,7 +81,6 @@ public class PharmaController {
     public ResponseEntity<?> deletePharmaEntriesByUser(@PathVariable Integer userId, @PathVariable Integer pharmaId) {
         try {
             pharmaService.deletePharmaEntry(userId, pharmaId);
-            ;
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
