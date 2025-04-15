@@ -26,18 +26,18 @@ public class PharmaController {
     private PharmaService pharmaService;
 
     @PostMapping(path = "/add-pharma-entry")
-    public ResponseEntity<String> addPharmaEntry(@RequestBody Map<String, Object> pharmaDetails) {
+    public ResponseEntity<Map<String, String>> addPharmaEntry(@RequestBody Map<String, Object> pharmaDetails) {
         try {
             String addEntryResult = pharmaService.addNewPharmaEntry(pharmaDetails);
 
             if (addEntryResult == "User Not Found.") {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "User Not Found."));
             }
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body("Entry Added Successfully.");
+                    .body(Map.of("message", "Entry Added Successfully."));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error occurred while adding entry: " + e.getMessage());
+                    .body(Map.of("message", "Error occurred while adding entry: " + e.getMessage()));
         }
 
     }
