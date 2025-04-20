@@ -1,6 +1,6 @@
 # Pharmserv
 
-Microservices for pharmaceutical data entry software.
+Microservices for pharmaceutical data entry software.<br>The application is dockerized for rapid deployment.
 
 ### Built With
 
@@ -32,9 +32,9 @@ Microservices for pharmaceutical data entry software.
    git clone https://github.com/RinzlerN26/Pharmserv-UI.git
    ```
 
-3. Change directory to Pharmserv-UI, uncomment production configuration in Dockerfile and caddy production configuration in Caddyfile.
+3. Change directory to Pharmserv-UI, uncomment production configuration in Dockerfile and comment environment object with production set as false and uncomment environment object with production set as true in src/environments/environments.ts .
 
-4. Change directory to Pharmserv, uncomment all services in docker-compose.yml,production configuration in Dockerfile and caddy production configuration in Caddyfile.
+4. Change directory to Pharmserv, uncomment all services in docker-compose.yml, production configuration in Dockerfile and caddy production configuration in Caddyfile.
 
 5. Run the application.
 
