@@ -32,7 +32,11 @@ Microservices for pharmaceutical data entry software.
    git clone https://github.com/RinzlerN26/Pharmserv-UI.git
    ```
 
-3. Run the application after changing directory to Pharmserv.
+3. Change directory to Pharmserv-UI, uncomment production configuration in Dockerfile and caddy production configuration in Caddyfile.
+
+4. Change directory to Pharmserv, uncomment all services in docker-compose.yml,production configuration in Dockerfile and caddy production configuration in Caddyfile.
+
+5. Run the application.
 
    ```sh
    docker compose up
