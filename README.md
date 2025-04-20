@@ -20,19 +20,19 @@ Microservices for pharmaceutical data entry software.
    git clone https://github.com/RinzlerN26/Pharmserv.git
    ```
 
-2. Clone the UI repo in the parent folder where the above repo was cloned.
+2. Clone the UI repo in the parent folder where the Pharmserv was cloned.
 
    The directory structure should be as follows after cloning:
 
    ParentFolder<br>
-   |--PharmServ<br>
-   |--PharmServ-UI
+   |--Pharmserv<br>
+   |--Pharmserv-UI
 
    ```sh
    git clone https://github.com/RinzlerN26/Pharmserv-UI.git
    ```
 
-3. Open a powershell/terminal in Pharmserv folder and run the application.
+3. Run the application after changing directory to Pharmserv.
 
    ```sh
    docker compose up
