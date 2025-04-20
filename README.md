@@ -1,6 +1,6 @@
 # Pharmserv
 
-Microservices for pharmaceutical data entry software.<br>The application is dockerized for rapid deployment.
+Microservices for pharmaceutical entry software.<br>The application is dockerized for rapid deployment.
 
 ### Built With
 
