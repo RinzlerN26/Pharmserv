@@ -18,7 +18,7 @@ import com.pharma.pharmserv.Entities.User;
 import com.pharma.pharmserv.Services.UserService;
 
 @Controller
-@RequestMapping(path = "/user")
+@RequestMapping(path = "/ms/user")
 public class UserController {
 
     @Autowired

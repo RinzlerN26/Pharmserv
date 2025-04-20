@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.pharma.pharmserv.Services.AuthService;
 
 @Controller
-@RequestMapping(path = "/auth")
+@RequestMapping(path = "/ms/auth")
 public class AuthController {
 
     @Autowired

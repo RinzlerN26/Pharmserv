@@ -19,7 +19,7 @@ import com.pharma.pharmserv.Entities.Pharma;
 import com.pharma.pharmserv.Services.PharmaService;
 
 @Controller
-@RequestMapping(path = "/pharma")
+@RequestMapping(path = "/ms/pharma")
 public class PharmaController {
 
     @Autowired

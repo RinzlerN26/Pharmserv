@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class WelcomeController {
 
-	@GetMapping("/")
+	@GetMapping("/ms")
 	public String index() {
 		return "Pharmserv Microservices.";
 	}
