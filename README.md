@@ -24,10 +24,8 @@ Microservices for pharmaceutical data entry software.
 
    The directory structure should be as follows after cloning:
 
-   ParentFolder
-
-   |--PharmServ
-
+   ParentFolder<br>
+   |--PharmServ<br>
    |--PharmServ-UI
 
    ```sh
