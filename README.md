@@ -21,7 +21,7 @@ Microservices for pharmaceutical data entry software.
    ```
 
 2. Clone the UI repo in the parent folder where the above repo was cloned.
-   The directory structure should be follows after cloning:
+   The directory structure should be as follows after cloning:
    ParentFolder
    |--PharmServ
    |--PharmServ-UI
