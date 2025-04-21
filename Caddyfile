@@ -1,11 +1,16 @@
 :80 {
     # Development
-    reverse_proxy ui:4200
+    # reverse_proxy ui:4200
     
-    # Production
+    # Production 1
     # root * /usr/share/caddy
     # try_files {path} /index.html
     # file_server
+
+    # Production 2
+    # handle {
+    # reverse_proxy ui:4200
+    # }
 
     # handle /ms/* {
     #     reverse_proxy spring-server:8080

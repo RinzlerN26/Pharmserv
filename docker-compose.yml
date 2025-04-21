@@ -40,17 +40,24 @@ services:
     depends_on:
       - db-server
 
-  # ui:
+  # ui: 
+  #   # Production 2
+  #   # image: node:22
+  #   # working_dir: /app
   #   build:
   #     context: ../Pharmserv-UI
   #     dockerfile: Dockerfile
   #   container_name: pharmserv-ui
   #   ports:
   #     - "4200:4200"
+  #   # Production 2
+  #   # command: >
+  #   #   sh -c "npm i && npm run build && npx serve -s dist/pharmserv-ui/browser -l 4200"  
   #   volumes:
   #     - ../Pharmserv-UI:/app  
   #     - /app/node_modules
-  #     - ui-build:/build-output  
+  #     # Production 1
+  #     # - ui-build:/build-output  
   #   depends_on:
   #     - db-server
   
@@ -61,10 +68,12 @@ services:
   #     - "80:80"  
   #   volumes:
   #     - ./Caddyfile:/etc/caddy/Caddyfile
-  #     - ui-build:/usr/share/caddy   
+  #     # Production 1
+  #     # - ui-build:/usr/share/caddy   
   #   depends_on:
   #     - ui     
 
 volumes:
   db-data:
+  # Production 1
   # ui-build:
