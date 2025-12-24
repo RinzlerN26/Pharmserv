@@ -10,13 +10,12 @@ import java.util.Date;
 import java.security.Key;
 import java.util.function.Function;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class JwtService {
-    @Value("$JWT_SECRET_KEY}")
-    private String SECRET_KEY;
+
+    private final String SECRET_KEY = "ye8Fgw2HEY7USQalgnx3VOHld46BOxXCjGfe/pYPQFl71Z5qX+EAEH0CbXbkX66B";
 
     private Key getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
