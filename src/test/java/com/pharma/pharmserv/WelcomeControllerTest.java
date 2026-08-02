@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import java.util.Objects;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -24,6 +25,6 @@ public class WelcomeControllerTest {
 		mvc.perform(MockMvcRequestBuilders.get("/ms")
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
-				.andExpect(content().string(equalTo("Pharmserv Microservices.")));
+				.andExpect(content().string(Objects.requireNonNull(equalTo("Pharmserv Microservices."))));
 	}
 }

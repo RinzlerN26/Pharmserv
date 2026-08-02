@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -59,10 +60,8 @@ public class PharmaService {
             throw new IllegalArgumentException("userId is required");
         }
 
-        Optional<User> userOptional = Optional
-                .ofNullable(userRepository.findById(userId.intValue())
-                        .orElseThrow(() -> new RuntimeException("User Not Found.")));
-        User user = userOptional.get();
+        User user = userRepository.findById(userId.intValue())
+                .orElseThrow(() -> new RuntimeException("User Not Found."));
         List<Pharma> pharmaceuticals = pharmaRepository.findByUser(user);
         return pharmaceuticals.stream().map(pharma -> {
             Map<String, Object> pharmaData = new HashMap<>();
@@ -82,8 +81,10 @@ public class PharmaService {
         userRepository.findById(userId.intValue())
                 .orElseThrow(() -> new RuntimeException("User Not Found."));
 
-        Pharma pharma = pharmaRepository.findById(pharmaId.intValue())
-                .orElseThrow(() -> new RuntimeException("Pharmaceutical Not Found."));
+        Pharma pharma = Objects.requireNonNull(
+                pharmaRepository.findById(pharmaId.intValue())
+                        .orElseThrow(() -> new RuntimeException("Pharmaceutical Not Found.")),
+                "Pharmaceutical must not be null");
 
         updatedPharmaDetails.forEach((key, value) -> {
             switch (key) {
@@ -112,18 +113,13 @@ public class PharmaService {
     }
 
     public void deletePharmaEntry(Integer userId, Integer pharmaId) {
-        Optional<User> userOptional = Optional
-                .ofNullable(userRepository.findById(userId.intValue())
-                        .orElseThrow(() -> new RuntimeException("User Not Found.")));
-        if (userOptional.isPresent()) {
-            Optional<Pharma> pharmaOptional = Optional
-                    .ofNullable(pharmaRepository.findById(pharmaId.intValue())
-                            .orElseThrow(() -> new RuntimeException("Pharmaceutical Not Found.")));
-            if (pharmaOptional.isPresent()) {
-                pharmaRepository.deleteById(pharmaId.intValue());
-            }
-        }
-        return;
+        userRepository.findById(userId.intValue())
+                .orElseThrow(() -> new RuntimeException("User Not Found."));
+
+        pharmaRepository.findById(pharmaId.intValue())
+                .orElseThrow(() -> new RuntimeException("Pharmaceutical Not Found."));
+
+        pharmaRepository.deleteById(pharmaId.intValue());
     }
 
 }

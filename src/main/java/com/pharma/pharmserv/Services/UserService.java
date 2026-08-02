@@ -2,6 +2,7 @@ package com.pharma.pharmserv.Services;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,8 +43,8 @@ public class UserService {
     }
 
     public void updateUserById(Integer userId, Map<String, Object> updatedUserDetails) {
-        User user = userRepository.findById(userId.intValue())
-                .orElseThrow(() -> new RuntimeException("User Not Found."));
+        User user = Objects.requireNonNull(userRepository.findById(userId.intValue())
+                .orElseThrow(() -> new RuntimeException("User Not Found.")), "User must not be null");
         updatedUserDetails.forEach((key, value) -> {
             switch (key) {
                 case "userName":
