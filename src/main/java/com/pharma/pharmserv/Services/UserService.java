@@ -2,7 +2,6 @@ package com.pharma.pharmserv.Services;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,11 +32,8 @@ public class UserService {
     }
 
     public Map<String, String> getUserDetails(String userStringId) {
-        Optional<User> userOptional = Optional
-                .ofNullable(userRepository.findByUserId(userStringId)
-                        .orElseThrow(() -> new RuntimeException("User Not Found.")));
-
-        User user = userOptional.get();
+        User user = userRepository.findByUserId(userStringId)
+                .orElseThrow(() -> new RuntimeException("User Not Found."));
         Map<String, String> userDetails = new HashMap<>();
         userDetails.put("userName", user.getUserName());
         userDetails.put("userEmail", user.getUserEmail());
@@ -46,9 +42,8 @@ public class UserService {
     }
 
     public void updateUserById(Integer userId, Map<String, Object> updatedUserDetails) {
-        Optional<User> userOptional = Optional
-                .ofNullable(userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User Not Found.")));
-        User user = userOptional.get();
+        User user = userRepository.findById(userId.intValue())
+                .orElseThrow(() -> new RuntimeException("User Not Found."));
         updatedUserDetails.forEach((key, value) -> {
             switch (key) {
                 case "userName":
@@ -71,11 +66,10 @@ public class UserService {
     }
 
     public void deleteUserById(Integer userId) {
-        Optional<User> userOptional = Optional
-                .ofNullable(userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User Not Found.")));
-        if (userOptional.isPresent()) {
-            userRepository.deleteById(userId);
-        }
+        userRepository.findById(userId.intValue())
+                .orElseThrow(() -> new RuntimeException("User Not Found."));
+
+        userRepository.deleteById(userId.intValue());
         return;
     }
 

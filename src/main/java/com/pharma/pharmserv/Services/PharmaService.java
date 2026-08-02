@@ -25,7 +25,14 @@ public class PharmaService {
     private PharmaRepository pharmaRepository;
 
     public String addNewPharmaEntry(Map<String, Object> pharmaDetails) {
-        Optional<User> userObj = userRepository.findById((Integer) pharmaDetails.get("userId"));
+
+        Number userId = (Number) pharmaDetails.get("userId");
+
+        if (userId == null) {
+            throw new IllegalArgumentException("userId is required");
+        }
+
+        Optional<User> userObj = userRepository.findById(userId.intValue());
 
         if (userObj.isEmpty()) {
             return "User Not Found.";
@@ -47,8 +54,14 @@ public class PharmaService {
     }
 
     public List<Map<String, Object>> getPharmaEntriesByUser(Integer userId) {
+
+        if (userId == null) {
+            throw new IllegalArgumentException("userId is required");
+        }
+
         Optional<User> userOptional = Optional
-                .ofNullable(userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User Not Found.")));
+                .ofNullable(userRepository.findById(userId.intValue())
+                        .orElseThrow(() -> new RuntimeException("User Not Found.")));
         User user = userOptional.get();
         List<Pharma> pharmaceuticals = pharmaRepository.findByUser(user);
         return pharmaceuticals.stream().map(pharma -> {
@@ -65,48 +78,49 @@ public class PharmaService {
     }
 
     public void updatePharmaEntry(Integer userId, Integer pharmaId, Map<String, Object> updatedPharmaDetails) {
-        Optional<User> userOptional = Optional
-                .ofNullable(userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User Not Found.")));
-        if (userOptional.isPresent()) {
-            Optional<Pharma> pharmaOptional = Optional
-                    .ofNullable(pharmaRepository.findById(pharmaId)
-                            .orElseThrow(() -> new RuntimeException("Pharmaceutical Not Found.")));
-            Pharma pharma = pharmaOptional.get();
-            updatedPharmaDetails.forEach((key, value) -> {
-                switch (key) {
-                    case "medicineName":
-                        pharma.setMedicineName((String) value);
-                        break;
-                    case "companyName":
-                        pharma.setCompanyName((String) value);
-                        break;
-                    case "purchaseRate":
-                        pharma.setPurchaseRate((Integer) value);
-                        break;
-                    case "dealerName":
-                        pharma.setDealerName((String) value);
-                        break;
-                    case "expiryDate":
-                        pharma.setExpiryDate(LocalDate.parse((String) value));
-                        break;
-                    default:
-                        break;
-                }
-            });
-            pharmaRepository.save(pharma);
-        }
+
+        userRepository.findById(userId.intValue())
+                .orElseThrow(() -> new RuntimeException("User Not Found."));
+
+        Pharma pharma = pharmaRepository.findById(pharmaId.intValue())
+                .orElseThrow(() -> new RuntimeException("Pharmaceutical Not Found."));
+
+        updatedPharmaDetails.forEach((key, value) -> {
+            switch (key) {
+                case "medicineName":
+                    pharma.setMedicineName((String) value);
+                    break;
+                case "companyName":
+                    pharma.setCompanyName((String) value);
+                    break;
+                case "purchaseRate":
+                    pharma.setPurchaseRate((Integer) value);
+                    break;
+                case "dealerName":
+                    pharma.setDealerName((String) value);
+                    break;
+                case "expiryDate":
+                    pharma.setExpiryDate(LocalDate.parse((String) value));
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        pharmaRepository.save(pharma);
         return;
     }
 
     public void deletePharmaEntry(Integer userId, Integer pharmaId) {
         Optional<User> userOptional = Optional
-                .ofNullable(userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User Not Found.")));
+                .ofNullable(userRepository.findById(userId.intValue())
+                        .orElseThrow(() -> new RuntimeException("User Not Found.")));
         if (userOptional.isPresent()) {
             Optional<Pharma> pharmaOptional = Optional
-                    .ofNullable(pharmaRepository.findById(pharmaId)
+                    .ofNullable(pharmaRepository.findById(pharmaId.intValue())
                             .orElseThrow(() -> new RuntimeException("Pharmaceutical Not Found.")));
             if (pharmaOptional.isPresent()) {
-                pharmaRepository.deleteById(pharmaId);
+                pharmaRepository.deleteById(pharmaId.intValue());
             }
         }
         return;
