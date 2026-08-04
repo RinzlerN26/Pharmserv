@@ -32,11 +32,11 @@ public class JwtService {
     }
 
     public String extractUserStringId(String token) {
-        return extractClaim(token, Claims::getSubject);
+        return extractClaim(token, claims -> claims.getSubject());
     }
 
     public Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
+        return extractClaim(token, claims -> claims.getExpiration());
     }
 
     private boolean isTokenExpired(String token) {
