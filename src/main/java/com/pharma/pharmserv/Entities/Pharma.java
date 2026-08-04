@@ -2,15 +2,13 @@ package com.pharma.pharmserv.Entities;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -32,11 +30,20 @@ public class Pharma {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotBlank(message = "Medicine name is required")
     private String medicineName;
+
+    @NotBlank(message = "Company name is required")
     private String companyName;
+
+    @NotNull(message = "Purchase rate is required")
+    @Positive(message = "Purchase rate must be greater than 0")
     private Integer purchaseRate;
+
+    @NotBlank(message = "Dealer name is required")
     private String dealerName;
 
+    @NotNull(message = "Expiry date is required")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate expiryDate;
 
