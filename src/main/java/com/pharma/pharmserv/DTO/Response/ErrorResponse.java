@@ -1,17 +1,17 @@
-package com.pharma.pharmserv.DTO;
+package com.pharma.pharmserv.DTO.Response;
 
 import java.time.LocalDateTime;
 
-public class ErrorDto {
+public class ErrorResponse {
 
     private LocalDateTime timestamp;
     private int status;
     private String message;
 
-    public ErrorDto() {
+    public ErrorResponse() {
     }
 
-    public ErrorDto(LocalDateTime timestamp, int status, String message) {
+    public ErrorResponse(LocalDateTime timestamp, int status, String message) {
         this.timestamp = timestamp;
         this.status = status;
         this.message = message;

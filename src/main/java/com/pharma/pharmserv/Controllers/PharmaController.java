@@ -1,9 +1,9 @@
 package com.pharma.pharmserv.Controllers;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,9 +13,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pharma.pharmserv.Entities.Pharma;
+import com.pharma.pharmserv.DTO.Response.PharmaResponse;
 import com.pharma.pharmserv.Services.PharmaService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -61,10 +62,15 @@ public class PharmaController {
             @ApiResponse(responseCode = "200", description = "Entries retrieved successfully"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<?> getAllPharmaEntries() {
+    public ResponseEntity<?> getAllPharmaEntries(@RequestParam(defaultValue = "0") int page,
+
+            @RequestParam(defaultValue = "10") int size,
+
+            @RequestParam(required = false) String search) {
         try {
-            Iterable<Pharma> pharmas = pharmaService.getPharmaEntries();
-            return ResponseEntity.ok(pharmas);
+            Page<PharmaResponse> pharmaPage = pharmaService.getPharmaEntries(page, size, search);
+
+            return ResponseEntity.ok(pharmaPage);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error occurred while fetching users: " + e.getMessage());
@@ -79,11 +85,17 @@ public class PharmaController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     public ResponseEntity<?> getPharmaEntriesByUser(
-            @Parameter(description = "Unique user ID", example = "12") @PathVariable Integer userId) {
-        try {
-            List<Map<String, Object>> pharmaEntries = pharmaService.getPharmaEntriesByUser(userId);
+            @PathVariable Integer userId,
 
-            return ResponseEntity.ok(pharmaEntries);
+            @RequestParam(defaultValue = "0") int page,
+
+            @RequestParam(defaultValue = "10") int size,
+
+            @RequestParam(required = false) String search) {
+        try {
+            Page<PharmaResponse> pharmaPage = pharmaService.getPharmaEntriesByUser(userId, page, size, search);
+
+            return ResponseEntity.ok(pharmaPage);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error occurred while adding entry: " + e.getMessage());

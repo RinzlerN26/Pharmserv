@@ -1,16 +1,17 @@
 package com.pharma.pharmserv.Services;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.pharma.pharmserv.DTO.Response.PharmaResponse;
 import com.pharma.pharmserv.Entities.Pharma;
 import com.pharma.pharmserv.Entities.User;
 import com.pharma.pharmserv.Repositories.PharmaRepository;
@@ -54,26 +55,33 @@ public class PharmaService {
         return pharmaRepository.findAll();
     }
 
-    public List<Map<String, Object>> getPharmaEntriesByUser(Integer userId) {
-
-        if (userId == null) {
-            throw new IllegalArgumentException("userId is required");
-        }
+    public Page<PharmaResponse> getPharmaEntriesByUser(
+            Integer userId,
+            int page,
+            int size,
+            String search) {
 
         User user = userRepository.findById(userId.intValue())
                 .orElseThrow(() -> new RuntimeException("User Not Found."));
-        List<Pharma> pharmaceuticals = pharmaRepository.findByUser(user);
-        return pharmaceuticals.stream().map(pharma -> {
-            Map<String, Object> pharmaData = new HashMap<>();
-            pharmaData.put("pharmaId", pharma.getPharmaId());
-            pharmaData.put("medicineName", pharma.getMedicineName());
-            pharmaData.put("companyName", pharma.getCompanyName());
-            pharmaData.put("purchaseRate", pharma.getPurchaseRate());
-            pharmaData.put("dealerName", pharma.getDealerName());
-            pharmaData.put("expiryDate", pharma.getExpiryDate());
-            pharmaData.put("userId", pharma.getUserId());
-            return pharmaData;
-        }).collect(Collectors.toList());
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Pharma> pharmaPage;
+
+        if (search == null || search.isBlank()) {
+            pharmaPage = pharmaRepository.findByUser(user, pageable);
+        } else {
+            pharmaPage = pharmaRepository.searchByUser(user, search, pageable);
+        }
+
+        return pharmaPage.map(pharma -> new PharmaResponse(
+                pharma.getPharmaId(),
+                pharma.getMedicineName(),
+                pharma.getCompanyName(),
+                pharma.getPurchaseRate(),
+                pharma.getDealerName(),
+                pharma.getExpiryDate(),
+                pharma.getUserId()));
     }
 
     public void updatePharmaEntry(Integer userId, Integer pharmaId, Map<String, Object> updatedPharmaDetails) {
@@ -120,6 +128,30 @@ public class PharmaService {
                 .orElseThrow(() -> new RuntimeException("Pharmaceutical Not Found."));
 
         pharmaRepository.deleteById(pharmaId.intValue());
+    }
+
+    public Page<PharmaResponse> getPharmaEntries(int page, int size, String search) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Pharma> pharmaPage;
+
+        if (search == null || search.trim().isEmpty()) {
+            pharmaPage = pharmaRepository.findAll(pageable);
+        } else {
+            pharmaPage = pharmaRepository
+                    .findByMedicineNameContainingIgnoreCaseOrCompanyNameContainingIgnoreCaseOrDealerNameContainingIgnoreCase(
+                            search, search, search, pageable);
+        }
+
+        return pharmaPage.map(pharma -> new PharmaResponse(
+                pharma.getPharmaId(),
+                pharma.getMedicineName(),
+                pharma.getCompanyName(),
+                pharma.getPurchaseRate(),
+                pharma.getDealerName(),
+                pharma.getExpiryDate(),
+                pharma.getUserId()));
     }
 
 }
