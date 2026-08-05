@@ -34,16 +34,16 @@ public class UserService {
 
     public Page<UserResponse> getAllUsers(int page, int size, String search) {
 
-    Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size);
 
-    if (search == null || search.isBlank()) {
-        return userRepository.findAll(pageable)
-                .map(this::convertToResponse);
+        if (search == null || search.isBlank()) {
+            return userRepository.findAll(pageable)
+                    .map(user -> this.convertToResponse(user));
+        }
+
+        return userRepository.search(search, pageable)
+                .map(user -> this.convertToResponse(user));
     }
-
-    return userRepository.search(search, pageable)
-            .map(user->this.convertToResponse(user));
-}
 
     public Map<String, String> getUserDetails(String userStringId) {
         User user = userRepository.findByUserId(userStringId)
@@ -88,12 +88,11 @@ public class UserService {
     }
 
     private UserResponse convertToResponse(User user) {
-    return new UserResponse(
-            user.getId(),
-            user.getUserName(),
-            user.getUserEmail(),
-            user.getUserId()
-    );
-}
+        return new UserResponse(
+                user.getId(),
+                user.getUserName(),
+                user.getUserEmail(),
+                user.getUserId());
+    }
 
 }
