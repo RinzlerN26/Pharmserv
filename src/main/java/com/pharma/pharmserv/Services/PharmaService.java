@@ -74,14 +74,7 @@ public class PharmaService {
             pharmaPage = pharmaRepository.searchByUser(user, search, pageable);
         }
 
-        return pharmaPage.map(pharma -> new PharmaResponse(
-                pharma.getPharmaId(),
-                pharma.getMedicineName(),
-                pharma.getCompanyName(),
-                pharma.getPurchaseRate(),
-                pharma.getDealerName(),
-                pharma.getExpiryDate(),
-                pharma.getUserId()));
+        return pharmaPage.map(pharma -> this.convertToResponse(pharma));
     }
 
     public void updatePharmaEntry(Integer userId, Integer pharmaId, Map<String, Object> updatedPharmaDetails) {
@@ -139,19 +132,21 @@ public class PharmaService {
         if (search == null || search.trim().isEmpty()) {
             pharmaPage = pharmaRepository.findAll(pageable);
         } else {
-            pharmaPage = pharmaRepository
-                    .findByMedicineNameContainingIgnoreCaseOrCompanyNameContainingIgnoreCaseOrDealerNameContainingIgnoreCase(
-                            search, search, search, pageable);
+            pharmaPage = pharmaRepository.search(search, pageable);
         }
 
-        return pharmaPage.map(pharma -> new PharmaResponse(
+        return pharmaPage.map(pharma -> this.convertToResponse(pharma));
+    }
+
+    private PharmaResponse convertToResponse(Pharma pharma) {
+        return new PharmaResponse(
                 pharma.getPharmaId(),
                 pharma.getMedicineName(),
                 pharma.getCompanyName(),
                 pharma.getPurchaseRate(),
                 pharma.getDealerName(),
                 pharma.getExpiryDate(),
-                pharma.getUserId()));
+                pharma.getUserId());
     }
 
 }

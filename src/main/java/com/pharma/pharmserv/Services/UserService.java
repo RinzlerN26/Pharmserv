@@ -5,11 +5,15 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import com.pharma.pharmserv.Repositories.UserRepository;
+import com.pharma.pharmserv.DTO.Response.UserResponse;
 import com.pharma.pharmserv.Entities.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 public class UserService {
@@ -28,9 +32,18 @@ public class UserService {
         userRepository.save(n);
     }
 
-    public Iterable<User> getAllUsers() {
-        return userRepository.findAll();
+    public Page<UserResponse> getAllUsers(int page, int size, String search) {
+
+    Pageable pageable = PageRequest.of(page, size);
+
+    if (search == null || search.isBlank()) {
+        return userRepository.findAll(pageable)
+                .map(this::convertToResponse);
     }
+
+    return userRepository.search(search, pageable)
+            .map(user->this.convertToResponse(user));
+}
 
     public Map<String, String> getUserDetails(String userStringId) {
         User user = userRepository.findByUserId(userStringId)
@@ -73,5 +86,14 @@ public class UserService {
         userRepository.deleteById(userId.intValue());
         return;
     }
+
+    private UserResponse convertToResponse(User user) {
+    return new UserResponse(
+            user.getId(),
+            user.getUserName(),
+            user.getUserEmail(),
+            user.getUserId()
+    );
+}
 
 }

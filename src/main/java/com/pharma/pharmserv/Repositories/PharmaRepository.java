@@ -13,25 +13,31 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface PharmaRepository extends JpaRepository<Pharma, Integer> {
-    Page<Pharma> findByUser(User user, Pageable pageable);
+        Page<Pharma> findByUser(User user, Pageable pageable);
 
-    Page<Pharma> findByMedicineNameContainingIgnoreCaseOrCompanyNameContainingIgnoreCaseOrDealerNameContainingIgnoreCase(
-            String medicineName,
-            String companyName,
-            String dealerName,
-            Pageable pageable);
+        @Query("""
+                            SELECT p
+                            FROM Pharma p
+                            WHERE
+                                LOWER(p.medicineName) LIKE LOWER(CONCAT('%', :search, '%'))
+                                OR LOWER(p.companyName) LIKE LOWER(CONCAT('%', :search, '%'))
+                                OR LOWER(p.dealerName) LIKE LOWER(CONCAT('%', :search, '%'))
+                        """)
+        Page<Pharma> search(
+                        @Param("search") String search,
+                        Pageable pageable);
 
-    @Query("""
-            SELECT p FROM Pharma p
-            WHERE p.user = :user
-            AND (
-                LOWER(p.medicineName) LIKE LOWER(CONCAT('%', :search, '%'))
-                OR LOWER(p.companyName) LIKE LOWER(CONCAT('%', :search, '%'))
-                OR LOWER(p.dealerName) LIKE LOWER(CONCAT('%', :search, '%'))
-            )
-            """)
-    Page<Pharma> searchByUser(
-            @Param("user") User user,
-            @Param("search") String search,
-            Pageable pageable);
+        @Query("""
+                        SELECT p FROM Pharma p
+                        WHERE p.user = :user
+                        AND (
+                            LOWER(p.medicineName) LIKE LOWER(CONCAT('%', :search, '%'))
+                            OR LOWER(p.companyName) LIKE LOWER(CONCAT('%', :search, '%'))
+                            OR LOWER(p.dealerName) LIKE LOWER(CONCAT('%', :search, '%'))
+                        )
+                        """)
+        Page<Pharma> searchByUser(
+                        @Param("user") User user,
+                        @Param("search") String search,
+                        Pageable pageable);
 }
