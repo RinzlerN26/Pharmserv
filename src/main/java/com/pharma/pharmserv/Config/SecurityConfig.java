@@ -12,6 +12,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.pharma.pharmserv.Filter.JwtAuthFilter;
+import com.pharma.pharmserv.Filter.LoginRateLimitFilter;
+import com.pharma.pharmserv.Filter.UserRateLimitFilter;
 
 @Configuration
 @EnableMethodSecurity
@@ -19,6 +21,12 @@ public class SecurityConfig {
 
         @Autowired
         private JwtAuthFilter jwtAuthFilter;
+
+        @Autowired
+        private LoginRateLimitFilter loginRateLimitFilter;
+
+        @Autowired
+        private UserRateLimitFilter userRateLimitFilter;
 
         @Bean
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -45,7 +53,15 @@ public class SecurityConfig {
                                                                 "/ms/api-docs/**")
                                                 .permitAll()
                                                 .anyRequest().authenticated())
-                                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                                .addFilterBefore(
+                                                jwtAuthFilter,
+                                                UsernamePasswordAuthenticationFilter.class)
+                                .addFilterBefore(
+                                                loginRateLimitFilter,
+                                                JwtAuthFilter.class)
+                                .addFilterAfter(
+                                                userRateLimitFilter,
+                                                JwtAuthFilter.class);
 
                 return http.build();
         }
