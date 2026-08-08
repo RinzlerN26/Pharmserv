@@ -64,7 +64,7 @@ public class PharmaService {
         User user = userRepository.findById(userId.intValue())
                 .orElseThrow(() -> new RuntimeException("User Not Found."));
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page - 1, size);
 
         Page<Pharma> pharmaPage;
 
@@ -125,7 +125,7 @@ public class PharmaService {
 
     public Page<PharmaResponse> getPharmaEntries(int page, int size, String search) {
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page - 1, size);
 
         Page<Pharma> pharmaPage;
 

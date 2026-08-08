@@ -34,7 +34,7 @@ public class UserService {
 
     public Page<UserResponse> getAllUsers(int page, int size, String search) {
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page - 1, size);
 
         if (search == null || search.isBlank()) {
             return userRepository.findAll(pageable)

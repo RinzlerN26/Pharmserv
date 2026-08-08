@@ -57,7 +57,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "Users retrieved successfully"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<?> getAllUsers(@RequestParam(defaultValue = "0") int page,
+    public ResponseEntity<?> getAllUsers(@RequestParam(defaultValue = "1") int page,
 
             @RequestParam(defaultValue = "10") int size,
 

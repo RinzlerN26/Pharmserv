@@ -62,7 +62,7 @@ public class PharmaController {
             @ApiResponse(responseCode = "200", description = "Entries retrieved successfully"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<?> getAllPharmaEntries(@RequestParam(defaultValue = "0") int page,
+    public ResponseEntity<?> getAllPharmaEntries(@RequestParam(defaultValue = "1") int page,
 
             @RequestParam(defaultValue = "10") int size,
 
@@ -87,7 +87,7 @@ public class PharmaController {
     public ResponseEntity<?> getPharmaEntriesByUser(
             @PathVariable Integer userId,
 
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int page,
 
             @RequestParam(defaultValue = "10") int size,
 

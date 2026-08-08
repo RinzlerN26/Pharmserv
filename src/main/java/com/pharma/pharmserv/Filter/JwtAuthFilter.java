@@ -1,4 +1,4 @@
-package com.pharma.pharmserv;
+package com.pharma.pharmserv.Filter;
 
 import java.io.IOException;
 import java.util.List;
