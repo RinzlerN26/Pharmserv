@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 
 @RestController
 @RequestMapping(path = "/ms/auth")
@@ -29,6 +30,7 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping(path = "/login")
+    @SecurityRequirements
     @Operation(summary = "Authenticate user", description = "Authenticates a user using userStringId and password and returns a JWT token.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Login successful"),
