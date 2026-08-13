@@ -12,6 +12,8 @@ import java.util.function.Function;
 
 import org.springframework.stereotype.Service;
 
+import com.pharma.pharmserv.Enums.Role;
+
 @Service
 public class JwtService {
 
@@ -22,13 +24,19 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(String userStringId) {
+    public String generateToken(String userStringId, Role role) {
         return Jwts.builder()
                 .setSubject(userStringId)
+                .claim("role", role.name())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+                .setExpiration(
+                        new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public String extractRole(String token) {
+        return extractClaim(token, claims -> claims.get("role", String.class));
     }
 
     public String extractUserStringId(String token) {

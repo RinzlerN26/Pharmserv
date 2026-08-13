@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.pharma.pharmserv.DTO.Request.CreateUserRequest;
 import com.pharma.pharmserv.Services.UserService;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -51,6 +52,7 @@ public class UserController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/get-all-users")
     @Operation(summary = "Get all users", description = "Returns all registered users.")
     @ApiResponses({
@@ -107,6 +109,7 @@ public class UserController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(path = "/delete-user/{userId}")
     @Operation(summary = "Delete user", description = "Deletes a user from the system.")
     @ApiResponses({

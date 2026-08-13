@@ -52,6 +52,10 @@ public class SecurityConfig {
                                                                 "/ms/api-docs",
                                                                 "/ms/api-docs/**")
                                                 .permitAll()
+                                                .requestMatchers(
+                                                                "/ms/user/get-all-users",
+                                                                "/ms/user/delete-user/**")
+                                                .hasRole("ADMIN")
                                                 .anyRequest().authenticated())
                                 .addFilterBefore(
                                                 jwtAuthFilter,

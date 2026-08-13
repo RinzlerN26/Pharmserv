@@ -9,11 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.pharma.pharmserv.DTO.Response.PharmaResponse;
 import com.pharma.pharmserv.Entities.Pharma;
 import com.pharma.pharmserv.Entities.User;
+import com.pharma.pharmserv.Exception.CustomServiceException;
 import com.pharma.pharmserv.Repositories.PharmaRepository;
 import com.pharma.pharmserv.Repositories.UserRepository;
 
@@ -62,7 +64,7 @@ public class PharmaService {
             String search) {
 
         User user = userRepository.findById(userId.intValue())
-                .orElseThrow(() -> new RuntimeException("User Not Found."));
+                .orElseThrow(() -> new CustomServiceException(HttpStatus.NOT_FOUND, "User Not Found."));
 
         Pageable pageable = PageRequest.of(page - 1, size);
 
@@ -80,11 +82,12 @@ public class PharmaService {
     public void updatePharmaEntry(Integer userId, Integer pharmaId, Map<String, Object> updatedPharmaDetails) {
 
         userRepository.findById(userId.intValue())
-                .orElseThrow(() -> new RuntimeException("User Not Found."));
+                .orElseThrow(() -> new CustomServiceException(HttpStatus.NOT_FOUND, "User Not Found."));
 
         Pharma pharma = Objects.requireNonNull(
                 pharmaRepository.findById(pharmaId.intValue())
-                        .orElseThrow(() -> new RuntimeException("Pharmaceutical Not Found.")),
+                        .orElseThrow(
+                                () -> new CustomServiceException(HttpStatus.NOT_FOUND, "Pharmaceutical Not Found.")),
                 "Pharmaceutical must not be null");
 
         updatedPharmaDetails.forEach((key, value) -> {
@@ -115,10 +118,10 @@ public class PharmaService {
 
     public void deletePharmaEntry(Integer userId, Integer pharmaId) {
         userRepository.findById(userId.intValue())
-                .orElseThrow(() -> new RuntimeException("User Not Found."));
+                .orElseThrow(() -> new CustomServiceException(HttpStatus.NOT_FOUND, "User Not Found."));
 
         pharmaRepository.findById(pharmaId.intValue())
-                .orElseThrow(() -> new RuntimeException("Pharmaceutical Not Found."));
+                .orElseThrow(() -> new CustomServiceException(HttpStatus.NOT_FOUND, "Pharmaceutical Not Found."));
 
         pharmaRepository.deleteById(pharmaId.intValue());
     }

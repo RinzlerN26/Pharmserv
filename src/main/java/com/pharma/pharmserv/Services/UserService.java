@@ -62,7 +62,7 @@ public class UserService {
 
     public Map<String, String> getUserDetails(String userStringId) {
         User user = userRepository.findByUserId(userStringId)
-                .orElseThrow(() -> new RuntimeException("User Not Found."));
+                .orElseThrow(() -> new CustomServiceException(HttpStatus.NOT_FOUND, "User Not Found."));
         Map<String, String> userDetails = new HashMap<>();
         userDetails.put("userName", user.getUserName());
         userDetails.put("userEmail", user.getUserEmail());
@@ -72,7 +72,8 @@ public class UserService {
 
     public void updateUserById(Integer userId, Map<String, Object> updatedUserDetails) {
         User user = Objects.requireNonNull(userRepository.findById(userId.intValue())
-                .orElseThrow(() -> new RuntimeException("User Not Found.")), "User must not be null");
+                .orElseThrow(() -> new CustomServiceException(HttpStatus.NOT_FOUND, "User Not Found.")),
+                "User must not be null");
         updatedUserDetails.forEach((key, value) -> {
             switch (key) {
                 case "userName":
@@ -96,7 +97,7 @@ public class UserService {
 
     public void deleteUserById(Integer userId) {
         userRepository.findById(userId.intValue())
-                .orElseThrow(() -> new RuntimeException("User Not Found."));
+                .orElseThrow(() -> new CustomServiceException(HttpStatus.NOT_FOUND, "User Not Found."));
 
         userRepository.deleteById(userId.intValue());
         return;

@@ -1,7 +1,10 @@
 package com.pharma.pharmserv.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+
 import com.pharma.pharmserv.Entities.User;
+import com.pharma.pharmserv.Exception.CustomServiceException;
 import com.pharma.pharmserv.Repositories.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,12 +27,12 @@ public class AuthService {
     public String authenticate(String userStringId, String userPass) {
 
         User user = userRepository.findByUserId(userStringId)
-                .orElseThrow(() -> new RuntimeException("User Not Found."));
+                .orElseThrow(() -> new CustomServiceException(HttpStatus.NOT_FOUND, "User Not Found."));
 
         if (!passwordEncoder.matches(userPass, user.getUserPass())) {
-            throw new RuntimeException("Invalid credentials.");
+            throw new CustomServiceException(HttpStatus.UNAUTHORIZED, "Invalid credentials.");
         }
 
-        return jwtService.generateToken(userStringId);
+        return jwtService.generateToken(userStringId, user.getRole());
     }
 }
