@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pharma.pharmserv.Entities.User;
+import com.pharma.pharmserv.DTO.Request.CreateUserRequest;
 import com.pharma.pharmserv.Services.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,7 +38,7 @@ public class UserController {
             @ApiResponse(responseCode = "201", description = "User created successfully"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<Map<String, String>> createNewUser(@RequestBody User userDetails) {
+    public ResponseEntity<Map<String, String>> createNewUser(@RequestBody CreateUserRequest userDetails) {
         // userDetails gets converted to User object
         // Spring Boot binds JSON to the getter/setter names,
         try {

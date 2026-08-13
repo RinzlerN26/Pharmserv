@@ -1,5 +1,7 @@
 package com.pharma.pharmserv.Entities;
 
+import com.pharma.pharmserv.Enums.Role;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -26,6 +28,10 @@ public class User {
 
   @NotBlank(message = "Password is required")
   private String userPass;
+
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private Role role = Role.USER;
 
   public Integer getId() {
     return id;
@@ -65,5 +71,13 @@ public class User {
 
   public void setUserPass(String userPass) {
     this.userPass = userPass;
+  }
+
+  public Role getRole() {
+    return role;
+  }
+
+  public void setRole(Role role) {
+    this.role = role;
   }
 }
