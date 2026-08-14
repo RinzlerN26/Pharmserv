@@ -3,6 +3,8 @@ package com.pharma.pharmserv.Repositories;
 import org.springframework.data.repository.query.Param;
 
 import com.pharma.pharmserv.Entities.User;
+import com.pharma.pharmserv.Enums.Role;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,4 +30,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
         boolean existsByUserId(String userId);
 
         boolean existsByUserEmail(String userEmail);
+
+        boolean existsByRole(Role role);
 }

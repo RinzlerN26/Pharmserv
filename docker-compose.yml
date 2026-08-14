@@ -13,6 +13,8 @@ services:
   #     SPRING_DATASOURCE_URL: jdbc:mysql://db-server:3306/pharmserv-db
   #     SPRING_DATASOURCE_USERNAME: mysql
   #     SPRING_DATASOURCE_PASSWORD: mysql
+  #   env_file:
+  #     - .env
   #   depends_on:
   #     - db-server 
 
@@ -61,17 +63,17 @@ services:
   #   depends_on:
   #     - db-server
   
-  # caddy:
-  #   image: caddy:alpine
-  #   container_name: pharmserv-caddy
-  #   ports:
-  #     - "80:80"  
-  #   volumes:
-  #     - ./Caddyfile:/etc/caddy/Caddyfile
-  #     # Production 1
-  #     # - ui-build:/usr/share/caddy   
-  #   depends_on:
-  #     - ui     
+# caddy:
+#   image: caddy:alpine
+#   container_name: pharmserv-caddy
+#   ports:
+#     - "80:80"  
+#   volumes:
+#     - ./Caddyfile:/etc/caddy/Caddyfile
+#     # Production 1
+#     # - ui-build:/usr/share/caddy   
+#   depends_on:
+#     - ui     
 
 volumes:
   db-data:
