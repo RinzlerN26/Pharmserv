@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import com.pharma.pharmserv.Repositories.UserRepository;
+import com.pharma.pharmserv.DTO.Request.AdminCreateUserRequest;
 import com.pharma.pharmserv.DTO.Request.CreateUserRequest;
 import com.pharma.pharmserv.DTO.Response.UserResponse;
 import com.pharma.pharmserv.Entities.User;
@@ -101,6 +102,36 @@ public class UserService {
 
         userRepository.deleteById(userId.intValue());
         return;
+    }
+
+    public void createUserAsAdmin(
+            AdminCreateUserRequest userDetails) {
+
+        if (userRepository.existsByUserId(
+                userDetails.getUserId())) {
+
+            throw new CustomServiceException(HttpStatus.BAD_REQUEST, "User ID already exists.");
+        }
+
+        if (userRepository.existsByUserEmail(
+                userDetails.getUserEmail())) {
+
+            throw new CustomServiceException(HttpStatus.BAD_REQUEST, "Email already exists.");
+        }
+
+        User user = new User();
+
+        user.setUserName(userDetails.getUserName());
+        user.setUserEmail(userDetails.getUserEmail());
+        user.setUserId(userDetails.getUserId());
+
+        user.setUserPass(
+                passwordEncoder.encode(
+                        userDetails.getUserPass()));
+
+        user.setRole(userDetails.getRole());
+
+        userRepository.save(user);
     }
 
     private UserResponse convertToResponse(User user) {
