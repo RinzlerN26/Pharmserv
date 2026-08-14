@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pharma.pharmserv.DTO.Request.CreateUserRequest;
+import com.pharma.pharmserv.DTO.Request.UserUpdateRequest;
 import com.pharma.pharmserv.Services.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -24,6 +25,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping(path = "/ms/user")
@@ -92,14 +94,15 @@ public class UserController {
     }
 
     @PatchMapping(path = "/update-user/{userId}")
-    @Operation(summary = "Update user", description = "Updates an existing user's information.")
+    @Operation(summary = "Update user", description = "Updates an existing user's profile information.")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "User updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
             @ApiResponse(responseCode = "404", description = "User not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     public ResponseEntity<?> updateUser(@Parameter(description = "User ID", example = "1") @PathVariable Integer userId,
-            @RequestBody Map<String, Object> userDetails) {
+            @Valid @RequestBody UserUpdateRequest userDetails) {
         try {
             userService.updateUserById(userId, userDetails);
             return ResponseEntity.noContent().build();

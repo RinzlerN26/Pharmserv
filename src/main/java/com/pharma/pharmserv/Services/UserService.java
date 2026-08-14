@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.pharma.pharmserv.Repositories.UserRepository;
 import com.pharma.pharmserv.DTO.Request.AdminCreateUserRequest;
 import com.pharma.pharmserv.DTO.Request.CreateUserRequest;
+import com.pharma.pharmserv.DTO.Request.UserUpdateRequest;
 import com.pharma.pharmserv.DTO.Response.UserResponse;
 import com.pharma.pharmserv.Entities.User;
 import com.pharma.pharmserv.Enums.Role;
@@ -71,29 +72,35 @@ public class UserService {
         return userDetails;
     }
 
-    public void updateUserById(Integer userId, Map<String, Object> updatedUserDetails) {
-        User user = Objects.requireNonNull(userRepository.findById(userId.intValue())
-                .orElseThrow(() -> new CustomServiceException(HttpStatus.NOT_FOUND, "User Not Found.")),
-                "User must not be null");
-        updatedUserDetails.forEach((key, value) -> {
-            switch (key) {
-                case "userName":
-                    user.setUserName((String) value);
-                    break;
-                case "userEmail":
-                    user.setUserEmail((String) value);
-                    break;
-                case "userPass":
-                    user.setUserPass(passwordEncoder.encode((String) value));
-                    break;
-                case "userId":
-                    user.setUserId((String) value);
-                    break;
-                default:
-                    break;
-            }
-        });
-        userRepository.save(user);
+    public void updateUserById(
+            Integer userId,
+            UserUpdateRequest updatedUserDetails) {
+
+        User user = userRepository.findById(userId.intValue())
+                .orElseThrow(() -> new CustomServiceException(HttpStatus.NOT_FOUND, "User Not Found."));
+
+        if (updatedUserDetails.getUserName() != null) {
+            user.setUserName(
+                    updatedUserDetails.getUserName());
+        }
+
+        if (updatedUserDetails.getUserEmail() != null) {
+            user.setUserEmail(
+                    updatedUserDetails.getUserEmail());
+        }
+
+        if (updatedUserDetails.getUserId() != null) {
+            user.setUserId(
+                    updatedUserDetails.getUserId());
+        }
+
+        if (updatedUserDetails.getUserPass() != null) {
+            user.setUserPass(
+                    passwordEncoder.encode(
+                            updatedUserDetails.getUserPass()));
+        }
+        userRepository.save(Objects.requireNonNull(user));
+
     }
 
     public void deleteUserById(Integer userId) {
@@ -110,13 +117,13 @@ public class UserService {
         if (userRepository.existsByUserId(
                 userDetails.getUserId())) {
 
-            throw new CustomServiceException(HttpStatus.BAD_REQUEST, "User ID already exists.");
+            throw new CustomServiceException(HttpStatus.CONFLICT, "User ID already exists.");
         }
 
         if (userRepository.existsByUserEmail(
                 userDetails.getUserEmail())) {
 
-            throw new CustomServiceException(HttpStatus.BAD_REQUEST, "Email already exists.");
+            throw new CustomServiceException(HttpStatus.CONFLICT, "Email already exists.");
         }
 
         User user = new User();
