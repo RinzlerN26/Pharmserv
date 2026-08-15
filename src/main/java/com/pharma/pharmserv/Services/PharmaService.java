@@ -3,15 +3,17 @@ package com.pharma.pharmserv.Services;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.pharma.pharmserv.DTO.Request.PharmaRequest;
 import com.pharma.pharmserv.DTO.Response.PharmaResponse;
 import com.pharma.pharmserv.Entities.Pharma;
 import com.pharma.pharmserv.Entities.User;
@@ -28,27 +30,22 @@ public class PharmaService {
     @Autowired
     private PharmaRepository pharmaRepository;
 
-    public String addNewPharmaEntry(Map<String, Object> pharmaDetails) {
+    public String addNewPharmaEntry(PharmaRequest request) {
 
-        Number userId = (Number) pharmaDetails.get("userId");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (userId == null) {
-            throw new IllegalArgumentException("userId is required");
-        }
+        String userStringId = authentication.getName();
 
-        Optional<User> userObj = userRepository.findById(userId.intValue());
+        User user = userRepository.findByUserId(userStringId)
+                .orElseThrow(() -> new CustomServiceException(HttpStatus.NOT_FOUND, "User Not Found."));
 
-        if (userObj.isEmpty()) {
-            return "User Not Found.";
-        }
-        User user = userObj.get();
         Pharma newPharmaEntry = new Pharma();
         newPharmaEntry.setUser(user);
-        newPharmaEntry.setMedicineName((String) pharmaDetails.get("medicineName"));
-        newPharmaEntry.setCompanyName((String) pharmaDetails.get("companyName"));
-        newPharmaEntry.setDealerName((String) pharmaDetails.get("dealerName"));
-        newPharmaEntry.setPurchaseRate((Integer) pharmaDetails.get("purchaseRate"));
-        newPharmaEntry.setExpiryDate(LocalDate.parse((String) pharmaDetails.get("expiryDate")));
+        newPharmaEntry.setMedicineName(request.getMedicineName());
+        newPharmaEntry.setCompanyName(request.getCompanyName());
+        newPharmaEntry.setDealerName(request.getDealerName());
+        newPharmaEntry.setPurchaseRate(request.getPurchaseRate());
+        newPharmaEntry.setExpiryDate(request.getExpiryDate());
         pharmaRepository.save(newPharmaEntry);
         return "Entry Added Successfully.";
     }

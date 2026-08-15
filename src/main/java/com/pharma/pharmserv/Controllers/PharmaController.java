@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.pharma.pharmserv.DTO.Request.PharmaRequest;
 import com.pharma.pharmserv.DTO.Response.PharmaResponse;
 import com.pharma.pharmserv.Services.PharmaService;
 
@@ -40,9 +41,9 @@ public class PharmaController {
             @ApiResponse(responseCode = "404", description = "User not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<Map<String, String>> addPharmaEntry(@RequestBody Map<String, Object> pharmaDetails) {
+    public ResponseEntity<Map<String, String>> addPharmaEntry(@RequestBody PharmaRequest request) {
         try {
-            String addEntryResult = pharmaService.addNewPharmaEntry(pharmaDetails);
+            String addEntryResult = pharmaService.addNewPharmaEntry(request);
 
             if (addEntryResult == "User Not Found.") {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "User Not Found."));
