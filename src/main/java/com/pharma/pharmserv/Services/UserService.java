@@ -1,9 +1,6 @@
 package com.pharma.pharmserv.Services;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -11,6 +8,7 @@ import com.pharma.pharmserv.Repositories.UserRepository;
 import com.pharma.pharmserv.DTO.Request.AdminCreateUserRequest;
 import com.pharma.pharmserv.DTO.Request.CreateUserRequest;
 import com.pharma.pharmserv.DTO.Request.UserUpdateRequest;
+import com.pharma.pharmserv.DTO.Response.AdminUserResponse;
 import com.pharma.pharmserv.DTO.Response.UserResponse;
 import com.pharma.pharmserv.Entities.User;
 import com.pharma.pharmserv.Enums.Role;
@@ -49,27 +47,23 @@ public class UserService {
         userRepository.save(n);
     }
 
-    public Page<UserResponse> getAllUsers(int page, int size, String search) {
+    public Page<AdminUserResponse> getAllUsers(int page, int size, String search) {
 
         Pageable pageable = PageRequest.of(page - 1, size);
 
         if (search == null || search.isBlank()) {
             return userRepository.findAll(pageable)
-                    .map(user -> this.convertToResponse(user));
+                    .map(user -> this.convertToAdminResponse(user));
         }
 
         return userRepository.search(search, pageable)
-                .map(user -> this.convertToResponse(user));
+                .map(user -> this.convertToAdminResponse(user));
     }
 
-    public Map<String, String> getUserDetails(String userStringId) {
+    public UserResponse getUserDetails(String userStringId) {
         User user = userRepository.findByUserId(userStringId)
                 .orElseThrow(() -> new CustomServiceException(HttpStatus.NOT_FOUND, "User Not Found."));
-        Map<String, String> userDetails = new HashMap<>();
-        userDetails.put("userName", user.getUserName());
-        userDetails.put("userEmail", user.getUserEmail());
-        userDetails.put("userIntId", user.getId().toString());
-        return userDetails;
+        return this.convertToResponse(user);
     }
 
     public void updateUserById(
@@ -147,6 +141,15 @@ public class UserService {
                 user.getUserName(),
                 user.getUserEmail(),
                 user.getUserId());
+    }
+
+    private AdminUserResponse convertToAdminResponse(User user) {
+        return new AdminUserResponse(
+                user.getId(),
+                user.getUserName(),
+                user.getUserEmail(),
+                user.getUserId(),
+                user.getRole());
     }
 
 }

@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.pharma.pharmserv.DTO.Request.CreateUserRequest;
 import com.pharma.pharmserv.DTO.Request.UserUpdateRequest;
+import com.pharma.pharmserv.DTO.Response.AdminUserResponse;
+import com.pharma.pharmserv.DTO.Response.UserResponse;
 import com.pharma.pharmserv.Services.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -26,6 +28,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 
 @RestController
 @RequestMapping(path = "/ms/user")
@@ -61,18 +64,14 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "Users retrieved successfully"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<?> getAllUsers(@RequestParam(defaultValue = "1") int page,
+    public ResponseEntity<Page<AdminUserResponse>> getAllUsers(@RequestParam(defaultValue = "1") int page,
 
             @RequestParam(defaultValue = "10") int size,
 
             @RequestParam(required = false) String search) {
-        try {
-            return ResponseEntity.ok(
-                    userService.getAllUsers(page, size, search));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error occurred while fetching users: " + e.getMessage());
-        }
+
+        return ResponseEntity.ok(
+                userService.getAllUsers(page, size, search));
     }
 
     @GetMapping(path = "/get-user-details/{userStringId}")
@@ -82,15 +81,11 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "User not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<?> getUserDetails(
+    public ResponseEntity<UserResponse> getUserDetails(
             @Parameter(description = "Unique user string ID", example = "USR10001") @PathVariable String userStringId) {
-        try {
-            Map<String, String> userDetailsMap = userService.getUserDetails(userStringId);
-            return ResponseEntity.ok(userDetailsMap);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error occurred while fetching user details: " + e.getMessage());
-        }
+
+        UserResponse userDetails = userService.getUserDetails(userStringId);
+        return ResponseEntity.ok(userDetails);
     }
 
     @PatchMapping(path = "/update-user/{userId}")
