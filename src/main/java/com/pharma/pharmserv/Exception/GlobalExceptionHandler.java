@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CustomServiceException.class)
     public ResponseEntity<?> handleCustomException(CustomServiceException ex) {
-        HttpStatus status = ex.getStatus();
+        HttpStatus status = ex.getStatus() != null ? ex.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
 
         return ResponseEntity.status(Objects.requireNonNull(status)).body(
                 new ErrorResponse(
