@@ -30,14 +30,28 @@ public class PharmaService {
     @Autowired
     private PharmaRepository pharmaRepository;
 
-    public String addNewPharmaEntry(PharmaRequest request) {
-
+    private User getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null ||
+                !authentication.isAuthenticated() ||
+                authentication.getName() == null) {
+
+            throw new CustomServiceException(
+                    HttpStatus.UNAUTHORIZED,
+                    "User is not authenticated.");
+        }
 
         String userStringId = authentication.getName();
 
-        User user = userRepository.findByUserId(userStringId)
-                .orElseThrow(() -> new CustomServiceException(HttpStatus.NOT_FOUND, "User Not Found."));
+        return userRepository.findByUserId(userStringId)
+                .orElseThrow(() -> new CustomServiceException(
+                        HttpStatus.NOT_FOUND,
+                        "User Not Found."));
+    }
+
+    public String addNewPharmaEntry(PharmaRequest request) {
+        User user = getAuthenticatedUser();
 
         Pharma newPharmaEntry = new Pharma();
         newPharmaEntry.setUser(user);
@@ -50,18 +64,12 @@ public class PharmaService {
         return "Entry Added Successfully.";
     }
 
-    public Iterable<Pharma> getPharmaEntries() {
-        return pharmaRepository.findAll();
-    }
-
     public Page<PharmaResponse> getPharmaEntriesByUser(
-            Integer userId,
             int page,
             int size,
             String search) {
 
-        User user = userRepository.findById(userId.intValue())
-                .orElseThrow(() -> new CustomServiceException(HttpStatus.NOT_FOUND, "User Not Found."));
+        User user = getAuthenticatedUser();
 
         Pageable pageable = PageRequest.of(page - 1, size);
 
@@ -76,16 +84,21 @@ public class PharmaService {
         return pharmaPage.map(pharma -> this.convertToResponse(pharma));
     }
 
-    public void updatePharmaEntry(Integer userId, Integer pharmaId, Map<String, Object> updatedPharmaDetails) {
+    public void updatePharmaEntry(Integer pharmaId, Map<String, Object> updatedPharmaDetails) {
 
-        userRepository.findById(userId.intValue())
-                .orElseThrow(() -> new CustomServiceException(HttpStatus.NOT_FOUND, "User Not Found."));
+        User user = getAuthenticatedUser();
 
         Pharma pharma = Objects.requireNonNull(
                 pharmaRepository.findById(pharmaId.intValue())
                         .orElseThrow(
                                 () -> new CustomServiceException(HttpStatus.NOT_FOUND, "Pharmaceutical Not Found.")),
                 "Pharmaceutical must not be null");
+
+        if (!pharma.getUserId().equals(user.getId())) {
+            throw new CustomServiceException(
+                    HttpStatus.FORBIDDEN,
+                    "You are not allowed to modify this pharmaceutical entry.");
+        }
 
         updatedPharmaDetails.forEach((key, value) -> {
             switch (key) {
@@ -113,17 +126,24 @@ public class PharmaService {
         return;
     }
 
-    public void deletePharmaEntry(Integer userId, Integer pharmaId) {
-        userRepository.findById(userId.intValue())
-                .orElseThrow(() -> new CustomServiceException(HttpStatus.NOT_FOUND, "User Not Found."));
+    public void deletePharmaEntry(Integer pharmaId) {
+        User user = getAuthenticatedUser();
 
-        pharmaRepository.findById(pharmaId.intValue())
-                .orElseThrow(() -> new CustomServiceException(HttpStatus.NOT_FOUND, "Pharmaceutical Not Found."));
+        Pharma pharma = pharmaRepository
+                .findById(pharmaId.intValue())
+                .orElseThrow(() -> new CustomServiceException(
+                        HttpStatus.NOT_FOUND,
+                        "Pharmaceutical Not Found."));
 
+        if (!pharma.getUserId().equals(user.getId())) {
+            throw new CustomServiceException(
+                    HttpStatus.FORBIDDEN,
+                    "You are not allowed to delete this pharmaceutical entry.");
+        }
         pharmaRepository.deleteById(pharmaId.intValue());
     }
 
-    public Page<PharmaResponse> getPharmaEntries(int page, int size, String search) {
+    public Page<PharmaResponse> getAllPharmaEntries(int page, int size, String search) {
 
         Pageable pageable = PageRequest.of(page - 1, size);
 

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -57,7 +58,8 @@ public class PharmaController {
 
     }
 
-    @GetMapping(path = "/get-pharma-entries")
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping(path = "/get-all-pharma-entries")
     @Operation(summary = "Get all pharmaceutical entries", description = "Returns all pharmaceutical entries stored in the system.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Entries retrieved successfully"),
@@ -69,7 +71,7 @@ public class PharmaController {
 
             @RequestParam(required = false) String search) {
         try {
-            Page<PharmaResponse> pharmaPage = pharmaService.getPharmaEntries(page, size, search);
+            Page<PharmaResponse> pharmaPage = pharmaService.getAllPharmaEntries(page, size, search);
 
             return ResponseEntity.ok(pharmaPage);
         } catch (Exception e) {
@@ -78,7 +80,7 @@ public class PharmaController {
         }
     }
 
-    @GetMapping("/get-pharma-entries/{userId}")
+    @GetMapping("/get-user-pharma-entries")
     @Operation(summary = "Get pharmaceutical entries by user", description = "Returns all pharmaceutical entries belonging to a specific user.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Entries retrieved successfully"),
@@ -86,15 +88,13 @@ public class PharmaController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     public ResponseEntity<?> getPharmaEntriesByUser(
-            @PathVariable Integer userId,
-
             @RequestParam(defaultValue = "1") int page,
 
             @RequestParam(defaultValue = "10") int size,
 
             @RequestParam(required = false) String search) {
         try {
-            Page<PharmaResponse> pharmaPage = pharmaService.getPharmaEntriesByUser(userId, page, size, search);
+            Page<PharmaResponse> pharmaPage = pharmaService.getPharmaEntriesByUser(page, size, search);
 
             return ResponseEntity.ok(pharmaPage);
         } catch (Exception e) {
@@ -103,7 +103,7 @@ public class PharmaController {
         }
     }
 
-    @PatchMapping(path = "/update-pharma-entry/{userId}/{pharmaId}")
+    @PatchMapping(path = "/update-pharma-entry/{pharmaId}")
     @Operation(summary = "Update pharmaceutical entry", description = "Updates an existing pharmaceutical entry belonging to a user.")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Entry updated successfully"),
@@ -111,12 +111,10 @@ public class PharmaController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     public ResponseEntity<?> updateUser(
-            @Parameter(description = "User ID", example = "12") @PathVariable Integer userId,
-
             @Parameter(description = "Pharmaceutical Entry ID", example = "55") @PathVariable Integer pharmaId,
             @RequestBody Map<String, Object> pharmaDetails) {
         try {
-            pharmaService.updatePharmaEntry(userId, pharmaId, pharmaDetails);
+            pharmaService.updatePharmaEntry(pharmaId, pharmaDetails);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -124,7 +122,7 @@ public class PharmaController {
         }
     }
 
-    @DeleteMapping(path = "/delete-pharma-entry/{userId}/{pharmaId}")
+    @DeleteMapping(path = "/delete-pharma-entry/{pharmaId}")
     @Operation(summary = "Delete pharmaceutical entry", description = "Deletes a pharmaceutical entry for a given user.")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Entry deleted successfully"),
@@ -132,10 +130,9 @@ public class PharmaController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     public ResponseEntity<?> deletePharmaEntriesByUser(
-            @Parameter(description = "User ID", example = "12") @PathVariable Integer userId,
             @Parameter(description = "Pharmaceutical Entry ID", example = "55") @PathVariable Integer pharmaId) {
         try {
-            pharmaService.deletePharmaEntry(userId, pharmaId);
+            pharmaService.deletePharmaEntry(pharmaId);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
