@@ -3,8 +3,10 @@ services:
   spring-server:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: pharmserv-spring-server
+      dockerfile: Dockerfile.dev
+    container_name: pharmserv-spring-server-dev
+    ports:
+      - "8080:8080"
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://db-server:3306/pharmserv-db
       SPRING_DATASOURCE_USERNAME: mysql
@@ -18,6 +20,12 @@ services:
       ADMIN_BOOTSTRAP_EMAIL: ${ADMIN_BOOTSTRAP_EMAIL}
       ADMIN_BOOTSTRAP_PASSWORD: ${ADMIN_BOOTSTRAP_PASSWORD}
 
+    volumes:
+      - ./src:/app/src
+      - ./.mvn:/app/.mvn
+      - ./pom.xml:/app/pom.xml
+      - ./mvnw:/app/mvnw
+
     depends_on:
       db-server:
         condition: service_healthy
@@ -27,14 +35,16 @@ services:
 
   db-server:
     image: mysql:8.0.30
-    container_name: pharmserv-mysql-server
+    container_name: pharmserv-mysql-server-dev
+    ports:
+      - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: pharmserv-db
       MYSQL_USER: mysql
       MYSQL_PASSWORD: mysql
     volumes:
-      - db-data:/var/lib/mysql
+      - db-data-dev:/var/lib/mysql
     healthcheck:
       test:
         [
@@ -54,7 +64,7 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: pharmserv-db-gui
+    container_name: pharmserv-db-gui-dev
     ports:
       - "8081:80"
     environment:
@@ -70,34 +80,29 @@ services:
   ui:
     build:
       context: ../Pharmserv-UI
-      dockerfile: Dockerfile
-    container_name: pharmserv-ui
+      dockerfile: Dockerfile.dev
+    container_name: pharmserv-ui-dev
+    ports:
+      - "4200:4200"
     volumes:
-      - ui-build:/build-output
-    restart: "no"
+      - ../Pharmserv-UI:/app
+      - ui-node-modules:/app/node_modules
+    restart: unless-stopped
 
 
   caddy:
     image: caddy:alpine
-    container_name: pharmserv-caddy
+    container_name: pharmserv-caddy-dev
     ports:
       - "80:80"
-      - "443:443"
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - ui-build:/usr/share/caddy:ro
-      - caddy-data:/data
-      - caddy-config:/config
+      - ./Caddyfile.dev:/etc/caddy/Caddyfile:ro
     depends_on:
-      ui:
-        condition: service_completed_successfully
-      spring-server:
-        condition: service_started
+      - spring-server
+      - ui
     restart: unless-stopped
 
 
 volumes:
-  db-data:
-  ui-build:
-  caddy-data:
-  caddy-config:
+  db-data-dev:
+  ui-node-modules:

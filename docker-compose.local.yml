@@ -1,0 +1,48 @@
+services:
+
+  db-server:
+    image: mysql:8.0.30
+    container_name: pharmserv-mysql-server
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: pharmserv-db
+      MYSQL_USER: mysql
+      MYSQL_PASSWORD: mysql
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-uroot",
+          "-proot"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: pharmserv-db-gui
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db-server
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: root
+    depends_on:
+      db-server:
+        condition: service_healthy
+    restart: unless-stopped
+
+
+volumes:
+  db-data:
