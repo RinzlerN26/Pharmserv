@@ -72,4 +72,4 @@ Upon termination, you must stop using and running the software and delete copies
 
 For permission requests, commercial licensing, redistribution, or other uses not explicitly permitted by this license, contact the copyright holder.
 
-**Copyright (c) 2026 Nishant Rathore. All rights reserved.**
+**Copyright (c) Nishant Rathore. All rights reserved.**
